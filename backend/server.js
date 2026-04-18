@@ -22,6 +22,19 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/uploads', express.static('uploads'));
 app.use(cookieParser());
 
+// Legacy support: internally rewrite legacy endpoints to /api/* for backwards compatibility
+const legacyPrefixes = ['/events', '/members', '/news', '/zones', '/resources'];
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  for (const p of legacyPrefixes) {
+    if (req.path === p || req.path.startsWith(p + '/')) {
+      req.url = '/api' + req.url; // rewrite and continue to next handlers
+      break;
+    }
+  }
+  next();
+});
+
 // Health check
 app.get('/health', (req, res) => {
   const db = require('./db');

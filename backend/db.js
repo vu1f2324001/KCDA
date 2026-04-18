@@ -29,8 +29,7 @@ async function connectWithRetry(retries = 10, delay = 5000) {
   for (let i = 0; i < retries; i++) {
     try {
       const conn = await mongoose.connect(DB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // Keep options minimal to avoid deprecated-driver warnings
         serverSelectionTimeoutMS: 5000,
       });
       dbConnected = true;
