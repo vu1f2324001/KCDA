@@ -16,7 +16,7 @@ const Zones = () => {
 
   const fetchZones = async () => {
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/zones`, { credentials: 'include' });
       const data = await response.json();
       setZones(data);
@@ -40,7 +40,7 @@ const Zones = () => {
   const handleDeleteZone = async (zoneId) => {
     if (!confirm('Delete this zone?')) return;
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/zones/${zoneId}`, { method: 'DELETE', credentials: 'include' });
       if (response.ok) {
         setRefreshKey(prev => prev + 1);

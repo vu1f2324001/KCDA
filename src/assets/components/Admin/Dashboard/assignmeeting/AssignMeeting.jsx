@@ -13,7 +13,7 @@ const AssignMeeting = () => {
     e.preventDefault();
     console.log("Saving Meeting:", meetingData);
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/events/meetings`, {
         method: 'POST',
         credentials: 'include',

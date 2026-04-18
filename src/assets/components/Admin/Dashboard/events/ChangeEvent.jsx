@@ -23,7 +23,7 @@ const ChangeEvent = () => {
 
   const fetchEvents = async () => {
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/events/events`, { credentials: 'include' });
       const data = await response.json();
       setEvents(data || []);
@@ -54,7 +54,7 @@ const ChangeEvent = () => {
       data.append('type', formData.type);
       files.forEach((file) => data.append('images', file));
 
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/events/events`, {
         method: 'POST',
         credentials: 'include',
@@ -86,7 +86,7 @@ const ChangeEvent = () => {
   const handleDelete = async (id) => {
     if (!confirm('Delete this event?')) return;
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/events/events/${id}`, { method: 'DELETE', credentials: 'include' });
       if (response.ok) {
         alert('Event deleted successfully!');

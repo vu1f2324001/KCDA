@@ -21,7 +21,7 @@ const EditZone = ({ zoneId, onClose, onUpdate }) => {
     setFetchError('');
     setLoading(true);
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       console.log('Fetching zone:', `${API}/api/zones/${zoneId}`);
       const response = await fetch(`${API}/api/zones/${zoneId}`, { credentials: 'include' });
       if (!response.ok) {

@@ -13,7 +13,7 @@ const AddMemberModal = ({ isOpen, onClose, onAdd }) => {
 
   if (!isOpen) return null;
 
-  const API = import.meta.env.VITE_API_BASE_URL || '';
+  const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
 
   const handleSubmit = async (e) => {
     e.preventDefault();

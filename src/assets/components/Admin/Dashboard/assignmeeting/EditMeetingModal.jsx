@@ -34,7 +34,7 @@ const EditMeetingModal = ({
     setError("");
     
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/events/meetings/${meetingItem._id}`, {
         method: 'PUT',
         credentials: 'include',

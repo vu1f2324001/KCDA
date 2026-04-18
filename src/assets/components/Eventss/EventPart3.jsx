@@ -7,7 +7,7 @@ const EventPart3 = () => {
   useEffect(() => {
     const fetchPastEvents = async () => {
       try {
-        const API = import.meta.env.VITE_API_BASE_URL || '';
+        const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
         console.log('[EventPart3] fetching from', `${API}/api/events`);
         const response = await fetch(`${API}/api/events`, { credentials: 'include' });
         const data = await response.json();

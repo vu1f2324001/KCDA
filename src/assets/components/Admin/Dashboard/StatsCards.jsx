@@ -16,7 +16,7 @@ const StatsCards = () => {
     setLoading(true);
     setError('');
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const endpoints = [
         `${API}/api/members/count`,
         `${API}/api/resources/count`,

@@ -41,7 +41,7 @@ const AddEvent = () => {
       data.append('venue', formData.venue);
       files.forEach((file) => data.append('images', file));
 
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/events/events`, {
         method: 'POST',
         credentials: 'include',

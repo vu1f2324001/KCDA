@@ -18,7 +18,7 @@ const AddZone = ({ onClose, onAdd }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
         const response = await fetch(`${API}/api/zones`, {
         method: 'POST',
           credentials: 'include',

@@ -39,7 +39,7 @@ const EditNewsModal = ({ isOpen, onClose, newsItem, onUpdate }) => {
       if (selectedImage) {
         const imageData = new FormData();
         imageData.append('thumbnail', selectedImage);
-        const API = import.meta.env.VITE_API_BASE_URL || '';
+        const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
         const imageRes = await fetch(`${API}/api/resources/${newsItem._id}/image`, {
           method: 'PUT',
           credentials: 'include',
@@ -51,7 +51,7 @@ const EditNewsModal = ({ isOpen, onClose, newsItem, onUpdate }) => {
         }
       }
 
-      const API = import.meta.env.VITE_API_BASE_URL || '';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
       const response = await fetch(`${API}/api/resources/${newsItem._id}`, {
         method: 'PUT',
         credentials: 'include',
