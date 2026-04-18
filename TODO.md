@@ -1,0 +1,2 @@
+# Fix Ward N/A Issue - TODO\n\n## Plan Steps:\n- [x] Step 1: Update backend/models/Member.js - Add `ward` and `bio` fields to schema\n- [x] Step 2: Update backend/seed-members.js - Parse location to set `ward`, add sample `bio`\n- [ ] Step 3: Run `node backend/seed-members.js` to re-seed DB with ward data\n- [ ] Step 4: Verify on /membership page - wards should show e.g. "Ward 15"\n- [ ] Step 5: Update admin forms (Add/EditMemberModal.jsx) to include ward/bio fields\n\n**Progress: Completed Steps 1-2**
+

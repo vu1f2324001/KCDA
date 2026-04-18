@@ -1,0 +1,23 @@
+{
+  "name": "kcda-backend",
+  "version": "1.0.0",
+  "description": "KCDA Association Portal Backend",
+  "main": "server-fixed.js",
+  "scripts": {
+    "start": "node server-fixed.js",
+"dev":"nodemon server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "miniproject": "file:..",
+    "mongoose": "^8.5.1",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
