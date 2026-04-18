@@ -17,7 +17,7 @@ app.get('/debug', (req, res) => {
 
 // Middleware
 // Configure CORS: allow explicit origin in production, and common local dev origins when not set
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || process.env.FRONTEND_URL || '';
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || process.env.FRONTEND_URL || 'https://kcda.onrender.com';
 const devAllowed = ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5102'];
 const allowedOrigins = [];
 if (CLIENT_ORIGIN) allowedOrigins.push(CLIENT_ORIGIN);
