@@ -37,6 +37,7 @@ const EditMeetingModal = ({
       const API = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API}/api/events/meetings/${meetingItem._id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },

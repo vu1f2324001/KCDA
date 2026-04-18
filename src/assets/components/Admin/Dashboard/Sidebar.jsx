@@ -15,8 +15,10 @@ const Sidebar = ({ isOpen, onClose }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("isAdmin");
-    window.location.href = "/";
+    const API = import.meta.env.VITE_API_BASE_URL || '';
+    fetch(`${API}/api/auth/logout`, { method: 'POST', credentials: 'include' })
+      .then(() => { window.location.href = '/'; })
+      .catch(() => { window.location.href = '/'; });
   };
 
   const isActive = (path) =>

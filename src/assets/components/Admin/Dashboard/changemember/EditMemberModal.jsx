@@ -36,6 +36,7 @@ const EditMemberModal = ({ isOpen, onClose, member, onSave, onUpdate }) => {
       const API = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API}/api/members/${member._id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });

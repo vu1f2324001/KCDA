@@ -12,7 +12,7 @@ const ChangeMember = () => {
 
   const fetchMembers = async () => {
     try {
-      const response = await fetch(`${API}/api/members`);
+      const response = await fetch(`${API}/api/members`, { credentials: 'include' });
       const data = await response.json();
       setMembers(data || []);
     } catch (err) {
@@ -33,7 +33,7 @@ const ChangeMember = () => {
     if (!confirm('Delete this member?')) return;
 
     try {
-      const response = await fetch(`${API}/api/members/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API}/api/members/${id}`, { method: 'DELETE', credentials: 'include' });
       if (response.ok) {
         alert('Member deleted!');
         fetchMembers();

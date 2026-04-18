@@ -23,7 +23,7 @@ const ChangeNews = () => {
   const fetchNews = async () => {
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/resources`);
+      const response = await fetch(`${API}/api/resources`, { credentials: 'include' });
       const data = await response.json();
       setNewsItems(data || []);
     } catch (err) {
@@ -63,6 +63,7 @@ const ChangeNews = () => {
       const API = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API}/api/resources`, {
         method: 'POST',
+        credentials: 'include',
         body: data,
       });
 
@@ -92,7 +93,7 @@ const ChangeNews = () => {
     if (!confirm('Delete this news item?')) return;
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/resources/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API}/api/resources/${id}`, { method: 'DELETE', credentials: 'include' });
       if (response.ok) {
         alert('News deleted successfully!');
         fetchNews();

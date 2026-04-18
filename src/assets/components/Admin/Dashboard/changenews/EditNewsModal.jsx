@@ -42,6 +42,7 @@ const EditNewsModal = ({ isOpen, onClose, newsItem, onUpdate }) => {
         const API = import.meta.env.VITE_API_BASE_URL || '';
         const imageRes = await fetch(`${API}/api/resources/${newsItem._id}/image`, {
           method: 'PUT',
+          credentials: 'include',
           body: imageData,
         });
         if (imageRes.ok) {
@@ -53,6 +54,7 @@ const EditNewsModal = ({ isOpen, onClose, newsItem, onUpdate }) => {
       const API = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API}/api/resources/${newsItem._id}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });

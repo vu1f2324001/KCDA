@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -14,10 +15,11 @@ app.get('/debug', (req, res) => {
 // Middleware
 // Configure CORS to allow requests from the frontend origin set in env
 const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || process.env.FRONTEND_URL || '*';
-app.use(cors({ origin: CLIENT_ORIGIN }));
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/uploads', express.static('uploads'));
+app.use(cookieParser());
 
 const connectDB = require('./db');
 

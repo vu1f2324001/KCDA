@@ -29,7 +29,7 @@ const ChangeMeeting = () => {
   const fetchMeetings = async () => {
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/events/meetings`);
+      const response = await fetch(`${API}/api/events/meetings`, { credentials: 'include' });
       const data = await response.json();
       setMeetings(data || []);
     } catch (err) {
@@ -44,6 +44,7 @@ const ChangeMeeting = () => {
       const API = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API}/api/events/meetings`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -77,7 +78,7 @@ const ChangeMeeting = () => {
     if (!confirm('Delete this meeting?')) return;
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/events/meetings/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API}/api/events/meetings/${id}`, { method: 'DELETE', credentials: 'include' });
       if (response.ok) {
         alert('Meeting deleted!');
         fetchMeetings();

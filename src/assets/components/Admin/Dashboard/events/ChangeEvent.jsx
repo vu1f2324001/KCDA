@@ -24,7 +24,7 @@ const ChangeEvent = () => {
   const fetchEvents = async () => {
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/events/events`);
+      const response = await fetch(`${API}/api/events/events`, { credentials: 'include' });
       const data = await response.json();
       setEvents(data || []);
     } catch (err) {
@@ -57,6 +57,7 @@ const ChangeEvent = () => {
       const API = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API}/api/events/events`, {
         method: 'POST',
+        credentials: 'include',
         body: data,
       });
 
@@ -86,7 +87,7 @@ const ChangeEvent = () => {
     if (!confirm('Delete this event?')) return;
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/events/events/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API}/api/events/events/${id}`, { method: 'DELETE', credentials: 'include' });
       if (response.ok) {
         alert('Event deleted successfully!');
         fetchEvents();

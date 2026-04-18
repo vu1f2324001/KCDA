@@ -27,6 +27,7 @@ const AddMemberModal = ({ isOpen, onClose, onAdd }) => {
       const response = await fetch(`${API}/api/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: 'include',
         body: JSON.stringify(memberData),
       });
 

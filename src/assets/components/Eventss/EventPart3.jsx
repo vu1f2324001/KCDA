@@ -8,14 +8,15 @@ const EventPart3 = () => {
     const fetchPastEvents = async () => {
       try {
         const API = import.meta.env.VITE_API_BASE_URL || '';
-        const response = await fetch(`${API}/api/events`);
+        console.log('[EventPart3] fetching from', `${API}/api/events`);
+        const response = await fetch(`${API}/api/events`, { credentials: 'include' });
         const data = await response.json();
-        // Past events (date < now), limit 9, newest first
-        const past = data
-          .filter(event => new Date(event.date) < new Date())
-          .sort((a, b) => new Date(b.date) - new Date(a.date))
-          .slice(0, 9);
-        setPastEvents(past);
+        console.log('[EventPart3] fetched events count:', Array.isArray(data) ? data.length : typeof data, data);
+        // For testing: show ALL events (no past/future filter)
+        const all = Array.isArray(data)
+          ? data.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 9)
+          : [];
+        setPastEvents(all);
       } catch (error) {
         console.error('Failed to fetch past events:', error);
       } finally {

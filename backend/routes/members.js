@@ -1,9 +1,10 @@
 const express = require('express');
 const Member = require('../models/Member');
 const router = express.Router();
+const auth = require('../middleware/auth');
 
 // Add Member
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     // Ignore any incoming status to enforce dynamic status calculation
     const payload = { ...req.body };
@@ -43,7 +44,9 @@ router.get('/active', async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0,0,0,0);
+    console.log('[members] /active query - today:', today.toISOString());
     const members = await Member.find({ expiryDate: { $gte: today } }).sort({ createdAt: -1 });
+    console.log('[members] found count:', members.length);
     const result = members.map(m => {
       const obj = m.toObject();
       obj.status = 'Active';
@@ -51,6 +54,7 @@ router.get('/active', async (req, res) => {
     });
     res.json(result);
   } catch (error) {
+    console.error('[members] /active error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -66,7 +70,7 @@ router.get('/count', async (req, res) => {
 });
 
 // Update Member
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   try {
     // Prevent manual status updates; status is computed dynamically
     const payload = { ...req.body };
@@ -90,7 +94,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete Member
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
     const deletedMember = await Member.findByIdAndDelete(req.params.id);
     if (!deletedMember) {

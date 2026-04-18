@@ -8,7 +8,7 @@ const NewsPart2 = () => {
     const fetchNews = async () => {
       try {
         const API = import.meta.env.VITE_API_BASE_URL || '';
-        const response = await fetch(`${API}/api/resources`);
+        const response = await fetch(`${API}/api/resources`, { credentials: 'include' });
         const data = await response.json();
         // Take latest 6
         const latest = data.slice(0, 6);

@@ -1,12 +1,13 @@
 const express = require('express');
 const Resource = require('../models/Resource');
 const router = express.Router();
+const auth = require('../middleware/auth');
 
 // Add Resource
 const upload = require('../middleware/multerConfig');
 const { uploadImage } = require('../middleware/upload');
 
-router.post('/', upload.single('thumbnail'), async (req, res) => {
+router.post('/', auth, upload.single('thumbnail'), async (req, res) => {
   try {
     let fileUrl = '';
     if (req.file) {
@@ -44,7 +45,7 @@ router.get('/count', async (req, res) => {
 });
 
 // Update Resource (text fields)
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   try {
     const updatedResource = await Resource.findByIdAndUpdate(
       req.params.id,
@@ -61,7 +62,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Update Resource image
-router.put('/:id/image', upload.single('thumbnail'), async (req, res) => {
+router.put('/:id/image', auth, upload.single('thumbnail'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image uploaded' });
@@ -82,7 +83,7 @@ router.put('/:id/image', upload.single('thumbnail'), async (req, res) => {
 });
 
 // Delete Resource
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
     const deletedResource = await Resource.findByIdAndDelete(req.params.id);
     if (!deletedResource) {

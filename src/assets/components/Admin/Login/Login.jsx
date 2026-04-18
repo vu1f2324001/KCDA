@@ -1,34 +1,52 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // This reads the email from Google
 
 const Login = () => {
   const navigate = useNavigate();
 
-  // THE LOCK: Only these people can enter
-  const authorizedEmails = [
-    "vanshikaindoria2005@gmail.com",
-    "vanshikaindoria@gmail.com", // PUT YOUR ACTUAL EMAIL HERE
-    "vu1f2324001@pvppcoe.ac.in",
-  ];
+  // On successful Google login, send credential to backend for verification
+  const handleSuccess = async (credentialResponse) => {
+    try {
+      const credential = credentialResponse?.credential;
+      if (!credential) return alert('No credential received from Google');
 
-  const handleSuccess = (credentialResponse) => {
-    // 1. Decode the secret token from Google to get the email
-    const details = jwtDecode(credentialResponse.credential);
-    const userEmail = details.email;
+      // Decode token locally for debugging the audience (no external dep)
+      const decodeJwt = (token) => {
+        try {
+          const part = token.split('.')[1];
+          const padded = part.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(part.length/4)*4, '=');
+          const json = atob(padded);
+          return JSON.parse(json);
+        } catch (e) {
+          return null;
+        }
+      };
 
-    // 2. Check if the person is on our list
-    if (authorizedEmails.includes(userEmail)) {
-      console.log("Access Granted for:", userEmail);
-      localStorage.setItem("isAdmin", "true");
-      navigate("/admin/change-member");
-    } else {
-      // 3. If they aren't you, show an error and do NOT let them in
-      alert(
-        "Unauthorized! You do not have permission to access this dashboard.",
-      );
-      console.log("Blocked unauthorized user:", userEmail);
+      const decoded = decodeJwt(credential);
+      console.log('Frontend decoded token aud:', decoded?.aud || decoded?.audience || '(none)');
+      console.log('Frontend env VITE_GOOGLE_CLIENT_ID:', import.meta.env.VITE_GOOGLE_CLIENT_ID || '(not set)');
+
+      const base = import.meta.env.VITE_API_BASE_URL || '';
+      const res = await fetch(`${base}/api/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // accept httpOnly cookie from server
+        body: JSON.stringify({ credential })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        return alert(err.error || 'Authentication failed');
+      }
+
+      const data = await res.json();
+
+      // Server sets httpOnly cookie; no client-side storage needed
+      navigate('/admin/change-member');
+    } catch (error) {
+      console.error('Login error', error);
+      alert('Authentication failed. Check console for details.');
     }
   };
 
@@ -45,7 +63,7 @@ const Login = () => {
         <div className="flex justify-center border-2 border-slate-50 py-6 rounded-lg bg-slate-50">
           <GoogleLogin
             onSuccess={handleSuccess}
-            onError={() => alert("Login Failed")}
+            onError={() => alert('Login Failed')}
           />
         </div>
 

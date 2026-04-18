@@ -9,7 +9,7 @@ const MeetingPart2 = () => {
     const fetchMeetings = async () => {
       try {
         const API = import.meta.env.VITE_API_BASE_URL || '';
-        const response = await fetch(`${API}/api/events/meetings/upcoming`);
+        const response = await fetch(`${API}/api/events/meetings/upcoming`, { credentials: 'include' });
         if (!response.ok) return;
         const data = await response.json();
         setUpcomingMeetings(data);

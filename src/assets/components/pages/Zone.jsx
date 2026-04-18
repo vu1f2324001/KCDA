@@ -14,7 +14,7 @@ const Zone = () => {
   const fetchZones = async () => {
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/zones`);
+      const response = await fetch(`${API}/api/zones`, { credentials: 'include' });
       const data = await response.json();
       setZones(data);
     } catch (error) {

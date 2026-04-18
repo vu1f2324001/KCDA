@@ -2,12 +2,13 @@ const express = require('express');
 const Event = require('../models/Event');
 const Meeting = require('../models/Meeting');
 const router = express.Router();
+const auth = require('../middleware/auth');
 const upload = require('../middleware/multerConfig');
 const { uploadImage } = require('../middleware/upload');
 
 // ===== EVENTS ROUTES =====
 // Add Event
-router.post('/events', upload.array('images', 10), async (req, res) => {
+router.post('/events', auth, upload.array('images', 10), async (req, res) => {
   try {
     const imageUrls = [];
     if (req.files) {
@@ -30,12 +31,29 @@ router.post('/events', upload.array('images', 10), async (req, res) => {
   }
 });
 
-// Get All Events
-router.get('/events', async (req, res) => {
+// Public: Get all events at '/api/events' (no '/events' suffix)
+router.get('/', async (req, res) => {
   try {
+    console.log('[events] GET / (public) called');
     const events = await Event.find({ type: 'event' }).populate('attendees', 'name storeName').sort({ date: 1 });
+    console.log('[events] found', events.length, 'events (public)');
+    if (events.length > 0) console.log('[events] sample event date/type:', events[0].date, events[0].type);
     res.json(events);
   } catch (error) {
+    console.error('[events] error', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Admin: Get All Events (mounted at '/api/events/events')
+router.get('/events', async (req, res) => {
+  try {
+    console.log('[events] GET /events (admin) called');
+    const events = await Event.find({ type: 'event' }).populate('attendees', 'name storeName').sort({ date: 1 });
+    console.log('[events] found', events.length, 'events (admin)');
+    res.json(events);
+  } catch (error) {
+    console.error('[events] error', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -51,7 +69,7 @@ router.get('/events/count', async (req, res) => {
 });
 
 // Update Event
-router.put('/events/:id', upload.array('images', 10), async (req, res) => {
+router.put('/events/:id', auth, upload.array('images', 10), async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) {
@@ -80,7 +98,7 @@ router.put('/events/:id', upload.array('images', 10), async (req, res) => {
 });
 
 // Delete Event
-router.delete('/events/:id', async (req, res) => {
+router.delete('/events/:id', auth, async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) {
@@ -95,7 +113,7 @@ router.delete('/events/:id', async (req, res) => {
 
 // ===== MEETINGS ROUTES =====
 // Add Meeting
-router.post('/meetings', upload.array('images', 10), async (req, res) => {
+router.post('/meetings', auth, upload.array('images', 10), async (req, res) => {
   try {
     const imageUrls = [];
     if (req.files) {
@@ -154,7 +172,7 @@ router.get('/meetings/upcoming', async (req, res) => {
 });
 
 // Update Meeting
-router.put('/meetings/:id', upload.array('images', 10), async (req, res) => {
+router.put('/meetings/:id', auth, upload.array('images', 10), async (req, res) => {
   try {
     const meeting = await Meeting.findById(req.params.id);
     if (!meeting) {
@@ -187,7 +205,7 @@ router.put('/meetings/:id', upload.array('images', 10), async (req, res) => {
 });
 
 // Delete Meeting
-router.delete('/meetings/:id', async (req, res) => {
+router.delete('/meetings/:id', auth, async (req, res) => {
   try {
     const meeting = await Meeting.findById(req.params.id);
     if (!meeting) {

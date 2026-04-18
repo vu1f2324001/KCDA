@@ -23,7 +23,7 @@ const EditZone = ({ zoneId, onClose, onUpdate }) => {
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
       console.log('Fetching zone:', `${API}/api/zones/${zoneId}`);
-      const response = await fetch(`${API}/api/zones/${zoneId}`);
+      const response = await fetch(`${API}/api/zones/${zoneId}`, { credentials: 'include' });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
@@ -53,8 +53,9 @@ const EditZone = ({ zoneId, onClose, onUpdate }) => {
     setLoading(true);
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/zones/${zoneId}`, {
+      const response = await fetch(`${API}/api/zones/${zoneId}`, { 
         method: 'PUT',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });

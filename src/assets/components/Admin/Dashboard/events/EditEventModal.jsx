@@ -81,6 +81,7 @@ const EditEventModal = ({
       const API = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API}/api/events/events/${eventItem._id}`, {
         method: 'PUT',
+        credentials: 'include',
         body: data,
       });
 

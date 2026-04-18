@@ -13,7 +13,7 @@ const Membership = () => {
   const fetchMembers = async () => {
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/members/active`);
+      const response = await fetch(`${API}/api/members/active`, { credentials: 'include' });
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       setMembers(data || []);

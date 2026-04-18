@@ -12,6 +12,8 @@
     "cloudinary": "^1.41.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.0",
+    "cookie-parser": "^1.4.6",
     "express": "^4.19.2",
     "miniproject": "file:..",
     "mongoose": "^8.5.1",

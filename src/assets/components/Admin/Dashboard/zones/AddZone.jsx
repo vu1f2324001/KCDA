@@ -19,8 +19,9 @@ const AddZone = ({ onClose, onAdd }) => {
     setLoading(true);
     try {
       const API = import.meta.env.VITE_API_BASE_URL || '';
-      const response = await fetch(`${API}/api/zones`, {
+        const response = await fetch(`${API}/api/zones`, {
         method: 'POST',
+          credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });

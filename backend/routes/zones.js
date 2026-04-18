@@ -1,6 +1,7 @@
 const express = require('express');
 const Zone = require('../models/Zone');
 const router = express.Router();
+const auth = require('../middleware/auth');
 
 // Get all zones
 router.get('/', async (req, res) => {
@@ -36,7 +37,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Add zone
-router.post('/', async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const zone = new Zone(req.body);
     const savedZone = await zone.save();
@@ -47,7 +48,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update zone
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth, async (req, res) => {
   try {
     const zone = await Zone.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!zone) {
@@ -60,7 +61,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete zone
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
   try {
     const zone = await Zone.findByIdAndDelete(req.params.id);
     if (!zone) {

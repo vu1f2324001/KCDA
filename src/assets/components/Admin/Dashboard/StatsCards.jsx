@@ -25,7 +25,7 @@ const StatsCards = () => {
         `${API}/api/zones/count`
       ];
 
-      const promises = endpoints.map(endpoint => fetch(endpoint).then(res => res.json()));
+      const promises = endpoints.map(endpoint => fetch(endpoint, { credentials: 'include' }).then(res => res.json()));
 
       const results = await Promise.all(promises);
       setStats({
