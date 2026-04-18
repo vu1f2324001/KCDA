@@ -11,7 +11,19 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false
+        secure: false,
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('Proxying:', req.method, req.url, '->', proxyReq.getHeader('host'));
+          });
+          proxy.on('error', (err, req, res) => {
+            console.log('Proxy error:', err);
+            res.writeHead(500, {
+              'Content-Type': 'text/plain'
+            });
+            res.end('Proxy error');
+          });
+        }
       }
     },
     hmr: {

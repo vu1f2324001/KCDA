@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node backend/server-fixed.js",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.4",

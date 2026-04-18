@@ -141,7 +141,7 @@ CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
 2. In Render service settings set:
    - Environment: Node
    - Start Command: `node server-fixed.js` (or `npm start` if configured)
-   - Environment variables: `MONGO_URI`, `JWT_SECRET`, `CLIENT_ORIGIN` (frontend URL), `CLOUDINARY_URL` (if used)
+   - **Important:** Environment variables: `MONGO_URI`, `JWT_SECRET`, `CLIENT_ORIGIN=https://kcda-1.onrender.com` (or your frontend domain), `CLOUDINARY_URL` (if used)
 3. Render provides a `PORT` variable automatically; the backend uses `process.env.PORT`.
 
 ### Frontend (Static Site on Render or Vercel):
@@ -149,6 +149,27 @@ CLOUDINARY_URL=cloudinary://api_key:api_secret@cloud_name
 1. Configure build command: `npm run build`
 2. Publish directory: `dist` (Vite default)
 3. Add environment variable at build time: `VITE_API_BASE_URL=https://your-backend.onrender.com`
+
+### Local Development (CORS Fixed ✅)
+
+1. **Start Backend:**
+   ```bash
+   cd backend
+   node server.js  # or npm run dev if nodemon setup
+   ```
+   Backend runs on http://localhost:5000
+
+2. **Start Frontend:**
+   ```bash
+   cd ..  # back to root
+   npm run dev
+   ```
+   Frontend runs on http://localhost:5102 with **Vite proxy** → no CORS issues!
+
+3. All `/api/*` calls now proxy to local backend automatically.
+
+**Note:** `.env` created with `VITE_API_BASE_URL=http://localhost:5000` (Vite reads at build/dev).
+
 
 Notes:
 - Ensure `CLIENT_ORIGIN` matches the deployed frontend origin to avoid CORS issues.
