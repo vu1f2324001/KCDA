@@ -6,12 +6,12 @@ const auth = require('../middleware/auth');
 const upload = require('../middleware/multerConfig');
 const { uploadImage } = require('../middleware/upload');
 const asyncHandler = require('../middleware/asyncHandler');
-const mongoose = require('mongoose');
+const db = require('../db');
 
 // ===== EVENTS ROUTES =====
 // Add Event
 router.post('/events', auth, upload.array('images', 10), asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const imageUrls = [];
   if (req.files) {
     for (let file of req.files) {
@@ -33,7 +33,7 @@ router.post('/events', auth, upload.array('images', 10), asyncHandler(async (req
 // Public: Get all events at '/api/events' (no '/events' suffix)
 router.get('/', asyncHandler(async (req, res) => {
   console.log('[events] GET / (public) called');
-  if (mongoose.connection.readyState !== 1) return res.json([]);
+  if (!db.isConnected()) return res.json([]);
   const events = await Event.find({ type: 'event' }).populate('attendees', 'name storeName').sort({ date: 1 });
   console.log('[events] found', events.length, 'events (public)');
   if (events.length > 0) console.log('[events] sample event date/type:', events[0].date, events[0].type);
@@ -43,7 +43,7 @@ router.get('/', asyncHandler(async (req, res) => {
 // Admin: Get All Events (mounted at '/api/events/events')
 router.get('/events', asyncHandler(async (req, res) => {
   console.log('[events] GET /events (admin) called');
-  if (mongoose.connection.readyState !== 1) return res.json([]);
+  if (!db.isConnected()) return res.json([]);
   const events = await Event.find({ type: 'event' }).populate('attendees', 'name storeName').sort({ date: 1 });
   console.log('[events] found', events.length, 'events (admin)');
   res.json(events);
@@ -51,14 +51,14 @@ router.get('/events', asyncHandler(async (req, res) => {
 
 // Events count
 router.get('/events/count', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json({ count: 0 });
+  if (!db.isConnected()) return res.json({ count: 0 });
   const count = await Event.countDocuments({ type: 'event' });
   res.json({ count });
 }));
 
 // Update Event
 router.put('/events/:id', auth, upload.array('images', 10), asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const event = await Event.findById(req.params.id);
   if (!event) {
     return res.status(404).json({ error: 'Event not found' });
@@ -84,7 +84,7 @@ router.put('/events/:id', auth, upload.array('images', 10), asyncHandler(async (
 
 // Delete Event
 router.delete('/events/:id', auth, asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const event = await Event.findById(req.params.id);
   if (!event) {
     return res.status(404).json({ error: 'Event not found' });
@@ -96,7 +96,7 @@ router.delete('/events/:id', auth, asyncHandler(async (req, res) => {
 // ===== MEETINGS ROUTES =====
 // Add Meeting
 router.post('/meetings', auth, upload.array('images', 10), asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const imageUrls = [];
   if (req.files) {
     for (let file of req.files) {
@@ -115,7 +115,7 @@ router.post('/meetings', auth, upload.array('images', 10), asyncHandler(async (r
 
 // Get All Meetings
 router.get('/meetings', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json([]);
+  if (!db.isConnected()) return res.json([]);
   const meetings = await Meeting.find()
     .populate('attendees', 'name storeName')
     .populate('zone')
@@ -125,14 +125,14 @@ router.get('/meetings', asyncHandler(async (req, res) => {
 
 // Meetings count
 router.get('/meetings/count', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json({ count: 0 });
+  if (!db.isConnected()) return res.json({ count: 0 });
   const count = await Meeting.countDocuments();
   res.json({ count });
 }));
 
 // Get Upcoming Meetings
 router.get('/meetings/upcoming', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json([]);
+  if (!db.isConnected()) return res.json([]);
   const now = new Date();
   const upcoming = await Meeting.find({ date: { $gt: now } })
     .populate('attendees', 'name storeName')
@@ -143,7 +143,7 @@ router.get('/meetings/upcoming', asyncHandler(async (req, res) => {
 
 // Update Meeting
 router.put('/meetings/:id', auth, upload.array('images', 10), asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const meeting = await Meeting.findById(req.params.id);
   if (!meeting) {
     return res.status(404).json({ error: 'Meeting not found' });
@@ -173,7 +173,7 @@ router.put('/meetings/:id', auth, upload.array('images', 10), asyncHandler(async
 
 // Delete Meeting
 router.delete('/meetings/:id', auth, asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const meeting = await Meeting.findById(req.params.id);
   if (!meeting) {
     return res.status(404).json({ error: 'Meeting not found' });

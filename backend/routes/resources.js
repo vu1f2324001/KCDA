@@ -3,14 +3,14 @@ const Resource = require('../models/Resource');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const asyncHandler = require('../middleware/asyncHandler');
-const mongoose = require('mongoose');
+const db = require('../db');
 
 // Add Resource
 const upload = require('../middleware/multerConfig');
 const { uploadImage } = require('../middleware/upload');
 
 router.post('/', auth, upload.single('thumbnail'), asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   let fileUrl = '';
   if (req.file) {
     fileUrl = await uploadImage(req.file.path);
@@ -25,21 +25,21 @@ router.post('/', auth, upload.single('thumbnail'), asyncHandler(async (req, res)
 
 // Get all Resources
 router.get('/', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json([]);
+  if (!db.isConnected()) return res.json([]);
   const resources = await Resource.find().sort({ uploadedAt: -1 });
   res.json(resources);
 }));
 
 // Get Resources count
 router.get('/count', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json({ count: 0 });
+  if (!db.isConnected()) return res.json({ count: 0 });
   const count = await Resource.countDocuments();
   res.json({ count });
 }));
 
 // Update Resource (text fields)
 router.put('/:id', auth, asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const updatedResource = await Resource.findByIdAndUpdate(
     req.params.id,
     req.body,
@@ -53,7 +53,7 @@ router.put('/:id', auth, asyncHandler(async (req, res) => {
 
 // Update Resource image
 router.put('/:id/image', auth, upload.single('thumbnail'), asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   if (!req.file) {
     return res.status(400).json({ error: 'No image uploaded' });
   }
@@ -71,7 +71,7 @@ router.put('/:id/image', auth, upload.single('thumbnail'), asyncHandler(async (r
 
 // Delete Resource
 router.delete('/:id', auth, asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const deletedResource = await Resource.findByIdAndDelete(req.params.id);
   if (!deletedResource) {
     return res.status(404).json({ error: 'Resource not found' });

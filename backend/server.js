@@ -24,30 +24,27 @@ app.use(cookieParser());
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime(), dbConnected: mongoose.connection.readyState === 1 });
+  const db = require('./db');
+  res.json({ status: 'ok', uptime: process.uptime(), dbConnected: !!db.isConnected() });
 });
+
+// Use centralized DB module
+const db = require('./db');
 
 // Protect critical API routes when DB is not connected to avoid crashes and return safe fallback
 app.use('/api', (req, res, next) => {
-  const critical = ['/members', '/events', '/news'];
+  const critical = ['/members', '/events', '/news', '/resources', '/zones'];
   const path = req.path.toLowerCase();
   const needsDb = critical.some(p => path.startsWith(p));
-  if (needsDb && mongoose.connection.readyState !== 1) {
-    // return safe fallback
-    return res.status(503).json({ error: 'Service temporarily unavailable', data: [] });
+  if (needsDb && !db.isConnected()) {
+    // For GET requests return empty array, otherwise 503
+    if (req.method === 'GET') return res.json([]);
+    return res.status(503).json({ error: 'Database unavailable' });
   }
   next();
 });
 
-// Routes - Both /api/* and legacy paths
-app.use('/members', require('./routes/members'));
-app.use('/events', require('./routes/events'));
-app.use('/resources', require('./routes/resources'));
-app.use('/auth', require('./routes/auth'));
-app.use('/test', require('./routes/test'));
-app.use('/zones', require('./routes/zones'));
-app.use('/news', require('./routes/news'));
-
+// Routes - standardize on /api/* only
 app.use('/api/members', require('./routes/members'));
 app.use('/api/events', require('./routes/events'));
 app.use('/api/resources', require('./routes/resources'));
@@ -68,6 +65,11 @@ const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+// Initiate DB connection (non-blocking)
+db.connectWithRetry(10, 5000).then(ok => {
+  if (!ok) console.warn('[server] DB did not connect after retries; running with degraded mode');
+}).catch(err => console.error('[server] DB connect error', err));
+
 // Graceful error handling for process
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
@@ -77,36 +79,7 @@ process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled Rejection at:', p, 'reason:', reason);
 });
 
-// MongoDB connection with retry logic
-const DB_URI = process.env.MONGO_URI;
-async function connectWithRetry(retries = 5, delay = 5000) {
-  if (!DB_URI) {
-    console.warn('[db] MONGO_URI not set; skipping DB connection');
-    return;
-  }
-  for (let i = 0; i < retries; i++) {
-    try {
-      await mongoose.connect(DB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        serverSelectionTimeoutMS: 5000,
-      });
-      console.log('🎉 Mongoose connected to MongoDB');
-      return;
-    } catch (err) {
-      console.error(`[db] Connection attempt ${i + 1} failed:`, err.message || err);
-      if (i < retries - 1) {
-        console.log(`[db] Retrying in ${delay}ms...`);
-        await new Promise(r => setTimeout(r, delay));
-      } else {
-        console.error('[db] All retry attempts failed');
-      }
-    }
-  }
-}
-
-// Initiate connection but don't crash on failure; server will respond with 503 for critical routes
-connectWithRetry(10, 5000).catch(err => console.error('[db] connectWithRetry error', err));
+// DB connection is handled by backend/db.js (connectWithRetry)
 
 // Handle graceful shutdown
 function shutdown() {

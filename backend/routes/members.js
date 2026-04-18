@@ -3,11 +3,11 @@ const Member = require('../models/Member');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const asyncHandler = require('../middleware/asyncHandler');
-const mongoose = require('mongoose');
+const db = require('../db');
 
 // Add Member
 router.post('/', auth, asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   // Ignore any incoming status to enforce dynamic status calculation
   const payload = { ...req.body };
   delete payload.status;
@@ -23,7 +23,7 @@ router.post('/', auth, asyncHandler(async (req, res) => {
 
 // Get all Members
 router.get('/', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json([]);
+  if (!db.isConnected()) return res.json([]);
   const members = await Member.find().sort({ createdAt: -1 });
   const today = new Date();
   today.setHours(0,0,0,0);
@@ -37,7 +37,7 @@ router.get('/', asyncHandler(async (req, res) => {
 
 // Get active Members (for Home page)
 router.get('/active', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json([]);
+  if (!db.isConnected()) return res.json([]);
   const today = new Date();
   today.setHours(0,0,0,0);
   console.log('[members] /active query - today:', today.toISOString());
@@ -53,14 +53,14 @@ router.get('/active', asyncHandler(async (req, res) => {
 
 // Get Members count
 router.get('/count', asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.json({ count: 0 });
+  if (!db.isConnected()) return res.json({ count: 0 });
   const count = await Member.countDocuments();
   res.json({ count });
 }));
 
 // Update Member
 router.put('/:id', auth, asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   // Prevent manual status updates; status is computed dynamically
   const payload = { ...req.body };
   delete payload.status;
@@ -81,7 +81,7 @@ router.put('/:id', auth, asyncHandler(async (req, res) => {
 
 // Delete Member
 router.delete('/:id', auth, asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ error: 'Service unavailable' });
+  if (!db.isConnected()) return res.status(503).json({ error: 'Database unavailable' });
   const deletedMember = await Member.findByIdAndDelete(req.params.id);
   if (!deletedMember) {
     return res.status(404).json({ error: 'Member not found' });
