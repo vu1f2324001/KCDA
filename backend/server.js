@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
@@ -14,9 +16,26 @@ app.get('/debug', (req, res) => {
 });
 
 // Middleware
-// Configure CORS to allow requests from the frontend origin set in env
-const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || process.env.FRONTEND_URL || '*';
-app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+// Configure CORS: allow explicit origin in production, and common local dev origins when not set
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || process.env.FRONTEND_URL || '';
+const devAllowed = ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5102'];
+const allowedOrigins = [];
+if (CLIENT_ORIGIN) allowedOrigins.push(CLIENT_ORIGIN);
+if (process.env.NODE_ENV !== 'production') allowedOrigins.push(...devAllowed);
+
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (e.g., curl, same-origin)
+    if (!origin) {
+      console.debug('[cors] no origin (server-side/same-origin request)');
+      return callback(null, true);
+    }
+    console.debug('[cors] incoming origin:', origin, 'allowed:', allowedOrigins.includes(origin));
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use('/uploads', express.static('uploads'));
@@ -57,6 +76,26 @@ app.use('/api', (req, res, next) => {
   next();
 });
 
+// Ensure concrete Access-Control-Allow-Origin header for credentialed requests
+// This middleware mirrors allowed origin back instead of letting '*' through.
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (!origin) return next();
+  // If origin is allowed, mirror it back and enable credentials
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Vary', 'Origin');
+  }
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    return res.sendStatus(204);
+  }
+  next();
+});
+
 // Routes - standardize on /api/* only
 app.use('/api/members', require('./routes/members'));
 app.use('/api/events', require('./routes/events'));
@@ -65,6 +104,23 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/test', require('./routes/test'));
 app.use('/api/zones', require('./routes/zones'));
 app.use('/api/news', require('./routes/news'));
+
+// Serve built frontend (single-service deployment)
+const clientBuildPath = path.join(__dirname, '..', 'dist');
+if (fs.existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath));
+  console.log('[server] Serving static frontend from', clientBuildPath);
+} else {
+  console.log('[server] Frontend build not found at', clientBuildPath);
+}
+
+// Catch-all: serve index.html for non-API routes so client-side routing works
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  const indexHtml = path.join(clientBuildPath, 'index.html');
+  if (fs.existsSync(indexHtml)) return res.sendFile(indexHtml);
+  return res.status(404).send('Frontend not built');
+});
 
 // Express error handler (last middleware)
 app.use((err, req, res, next) => {
@@ -76,6 +132,16 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+});
+
+// Handle server listen errors (e.g., port in use)
+server.on('error', (err) => {
+  if (err && err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} already in use. Set PORT env or stop the process using that port.`);
+    // Do not crash silently — exit with non-zero so process manager can react
+    process.exit(1);
+  }
+  console.error('Server error:', err);
 });
 
 // Initiate DB connection (non-blocking)
