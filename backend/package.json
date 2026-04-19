@@ -2,9 +2,9 @@
   "name": "kcda-backend",
   "version": "1.0.0",
   "description": "KCDA Association Portal Backend",
-  "main": "server-fixed.js",
+"main": "server.js",
   "scripts": {
-    "start": "node server-fixed.js",
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "dependencies": {
