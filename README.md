@@ -218,7 +218,7 @@ KCDA Control — built by Our team.
 | Name | Role | GitHub |
 |------|------|--------|
 | Akshada Valkunde | Full Stack Developer | [@vu1f2324001](https://github.com/vu1f2324001) |
-| Kartiki Patil | Frontend Developer | [@kartiki-patil](https://github.com/vu1f2324049) |
+| Kartiki Patil | Frontend Developer | [@kartiki-patil](https://github.com/kartiki-patil) |
 | Vanshika Indoria | Full Stack Developer | [@vanshikaindoria](https://github.com/vanshikaindoria) |
 | Maithili Pandey | Backend Developer | [@maithilipandey](https://github.com/maithilipandey) |
 ---
