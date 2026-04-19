@@ -28,7 +28,7 @@ const ChangeMeeting = () => {
 
   const fetchMeetings = async () => {
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda.onrender.com';
       const response = await fetch(`${API}/api/events/meetings`, { credentials: 'include' });
       const data = await response.json();
       setMeetings(data || []);
@@ -41,7 +41,7 @@ const ChangeMeeting = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
+      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda.onrender.com';
       const response = await fetch(`${API}/api/events/meetings`, {
         method: 'POST',
         credentials: 'include',

@@ -8,7 +8,7 @@ const ChangeMember = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
 
-  const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
+  const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda.onrender.com';
 
   const fetchMembers = async () => {
     try {

@@ -10,6 +10,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
+        // Production builds use VITE_API_BASE_URL
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {

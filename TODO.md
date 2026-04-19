@@ -1,22 +1,39 @@
-# CORS Fix Plan - Progress Tracker
+# Production Deployment Fix TODO
 
-## Steps:
-- [x] 1. Create TODO.md with plan breakdown
-- [x] 2. Update vite.config.js to add proxy for /api -> http://localhost:5000 (enhanced logging)
-- [x] 3. Create .env with VITE_API_BASE_URL=http://localhost:5000
-- [x] 4. Update README.md with local setup instructions (run backend, frontend)
-- [ ] 5. Test local: cd backend && node server.js; npm run dev
-- [ ] 6. Verify no CORS errors in browser console
-- [ ] 7. Prod note: Set CLIENT_ORIGIN=https://kcda-1.onrender.com on Render dashboard
+## Approved Plan Steps (Single Service: https://kcda.onrender.com)
 
-**COMPLETE** - Local CORS fixed! Prod: Set CLIENT_ORIGIN on Render.
+**Status: [ ] Not Started**
 
-Prod backend issue (Cannot GET /): Render likely uses "npm start" (runs server-fixed.js → server.js).
+1. [x] **Create Frontend .env.production**
+   - VITE_GOOGLE_CLIENT_ID=402857003232-gc2dkfs86shhpe1fo1f669bmb11euf8o.apps.googleusercontent.com (from visible tab)
+   - VITE_API_BASE_URL=https://kcda.onrender.com
 
-server.js catch-all serves frontend if dist/ exists, but for pure API backend:
+2. [x] **Update API Base URLs**
+   - Replace fallback 'https://kcda-1.onrender.com' → 'https://kcda.onrender.com' in frontend components
+   - Ensure StatsCards uses full URL for /api endpoints
 
-Run `npm run build` (builds frontend to dist/), then redeploy backend.
+3. [x] **Update Backend Config**
+   - backend/server.js: CLIENT_ORIGIN='https://kcda.onrender.com'
+   - Ensure backend/.env has matching GOOGLE_CLIENT_ID
 
-Or reconfigure Render as Private Service (API-only), frontend separate Static Site.
+4. [x] **Fix Backend Package.json**
+   - "main": "server.js", "start": "node server.js"
 
-Test local first.
+5. [ ] **Test Locally**
+   - Add .env.production to .gitignore? No, commit for Render
+   - `npm install` frontend/backend
+   - `vite --mode production` verify env
+   - Backend dev test
+
+6. [ ] **Build & Deploy**
+   - Frontend: `vite build` → dist/ served by backend
+   - Push to repo → Render auto-deploy
+   - Test: Google login /admin-login, data pages, refresh routes
+
+**Notes:**
+- Single service deployment (backend serves frontend dist/)
+- No localhost issues found
+- Routing handled by server.js catch-all
+
+**Progress Tracker:**
+- Updated: Mark [x] when complete

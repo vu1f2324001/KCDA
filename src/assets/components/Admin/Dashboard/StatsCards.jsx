@@ -16,16 +16,16 @@ const StatsCards = () => {
     setLoading(true);
     setError('');
     try {
-      const API = import.meta.env.VITE_API_BASE_URL || 'https://kcda-1.onrender.com';
+      const API = import.meta.env.VITE_API_BASE_URL || '';
       const endpoints = [
-        `${API}/api/members/count`,
-        `${API}/api/resources/count`,
-        `${API}/api/events/meetings/count`,
-        `${API}/api/events/events/count`,
-        `${API}/api/zones/count`
+        `/api/members/count`,
+        `/api/resources/count`,
+        `/api/events/meetings/count`,
+        `/api/events/events/count`,
+        `/api/zones/count`
       ];
 
-      const promises = endpoints.map(endpoint => fetch(endpoint, { credentials: 'include' }).then(res => res.json()));
+      const promises = endpoints.map(endpoint => fetch(`${API}${endpoint}`, { credentials: 'include' }).then(res => res.json()).catch(() => ({ count: 0 }))); 
 
       const results = await Promise.all(promises);
       setStats({
