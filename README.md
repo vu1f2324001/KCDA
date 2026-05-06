@@ -8,7 +8,7 @@
   <img alt="Render" src="https://img.shields.io/badge/Render-000000?style=for-the-badge&logo=render&logoColor=white" />
 </p>
 
-> A modern, production-ready MERN dashboard to manage KCDA membership, events, meetings, zones and news. Built for administrators with a polished public-facing members directory.
+> A modern, production-ready MERN dashboard to manage KCDA membership, events, meetings, zones and news. Built for administrators with a polished public-facing members directory
 
 ---
 
