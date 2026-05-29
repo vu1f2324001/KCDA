@@ -35,4 +35,3 @@ async function migrateEvents() {
 }
 
 migrateEvents();
-
