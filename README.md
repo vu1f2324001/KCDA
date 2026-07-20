@@ -32,7 +32,6 @@
 - Database: MongoDB (Atlas)
 - Image storage: Cloudinary
 - Deployment: Render (recommended)
-
 ---
 
 ## 📁 Project Structure (high level)
