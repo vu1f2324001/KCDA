@@ -9,7 +9,7 @@
 </p>
 
 > A modern, production-ready MERN dashboard to manage KCDA membership, events, meetings, zones and news. Built for administrators with a polished public-facing members directory.
-> 
+>
 ---
 
 ## ✨ Features
