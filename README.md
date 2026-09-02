@@ -223,6 +223,6 @@ KCDA Control — built by Our team.
 ---
 
 Link - 
-https://kcda.onrender.com/news
+https://kcda.onrender.com/
 
 _Thank you for using KCDA Control. Keep secrets out of Git — use Render environment variables for production._
