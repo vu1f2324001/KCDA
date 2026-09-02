@@ -222,4 +222,7 @@ KCDA Control — built by Our team.
 | Maithili Pandey | Backend Developer | [@maithilipandey](https://github.com/maithilipandey) |
 ---
 
+Link - 
+https://kcda.onrender.com/news
+
 _Thank you for using KCDA Control. Keep secrets out of Git — use Render environment variables for production._
